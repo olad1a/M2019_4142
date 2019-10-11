@@ -1,0 +1,101 @@
+#my function
+
+basic_calculations <- function (data, r_s, c_s) {
+  subset <- data[r_s, c_s]
+  my_list <- list(subset)
+  for (i in 1:length(subset)){
+    if (is.numeric(subset[ , i])){
+      result1 <- mean(subset[ , i])
+      my_list <- append(my_list, result1)
+      
+    } else {
+      result2 <- table(subset[ , i])
+      my_list <- append(my_list, result2)
+    }}
+  print(my_list)} 
+
+
+
+#examples 
+
+#1
+
+basic_calculations(iris, 1:3, 1:5)
+
+[[1]]
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+
+[[2]]
+[1] 4.9
+
+[[3]]
+[1] 3.233333
+
+[[4]]
+[1] 1.366667
+
+[[5]]
+[1] 0.2
+
+$setosa
+[1] 3
+
+$versicolor
+[1] 0
+
+$virginica
+[1] 0
+
+
+
+#2
+basic_calculations(iris, c(1, 35, 67, 106, 145), c(1, 2, 5))
+
+[[1]]
+    Sepal.Length Sepal.Width    Species
+1            5.1         3.5     setosa
+35           4.9         3.1     setosa
+67           5.6         3.0 versicolor
+106          7.6         3.0  virginica
+145          6.7         3.3  virginica
+
+[[2]]
+[1] 5.98
+
+[[3]]
+[1] 3.18
+
+$setosa
+[1] 2
+
+$versicolor
+[1] 1
+
+$virginica
+[1] 2
+
+
+#tree
+
+basic_calculations(trees, c(1:5, 8, 21), 1:3)
+[[1]]
+   Girth Height Volume
+1    8.3     70   10.3
+2    8.6     65   10.3
+3    8.8     63   10.2
+4   10.5     72   16.4
+5   10.7     81   18.8
+8   11.0     75   18.2
+21  14.0     78   34.5
+
+[[2]]
+[1] 10.27143
+
+[[3]]
+[1] 72
+
+[[4]]
+[1] 16.95714
