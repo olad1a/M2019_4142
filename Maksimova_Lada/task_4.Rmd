@@ -10,6 +10,7 @@ output: html_document
 ```{r}
 `weather` <- readRDS('C:/Users/Xiaomi/Desktop/R_class/weather.rds')
 library(tidyr)
+library(dplyr)
 View(weather)
 ```
 
