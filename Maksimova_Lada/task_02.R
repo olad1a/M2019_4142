@@ -1,7 +1,7 @@
 #my function
 
-basic_calculations <- function (data, r_s, c_s) {
-  subset <- data[r_s, c_s]
+basic_calculations <- function(data, r_s, c_s) {
+  subset <- data[r_s, c_s, drop=F]
   my_list <- list(subset)
   for (i in 1:length(subset)){
     if (is.numeric(subset[ , i])){
@@ -9,10 +9,10 @@ basic_calculations <- function (data, r_s, c_s) {
       my_list <- append(my_list, result1)
       
     } else {
-      result2 <- table(subset[ , i])
-      my_list <- append(my_list, result2)
+      my_list[[i + 1]] <- table(subset[ , i])
     }}
-  print(my_list)} 
+  my_list
+} 
 
 #examples 
 
