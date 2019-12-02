@@ -1,23 +1,24 @@
-class_check <- function(data) {
-  if (is.numeric(data)) {
-    result <- mean(matrix(data))
+class_check <- function(c_s) {
+  if (is.numeric(c_s)) {
+    result <- mean(as.matrix(c_s))
   }
   else {
-    result <- table(data) 
+    result <- table(c_s) 
   }
   return(result)
 }
 
 
-my_new_fun <- function(data, r_s, c_s, split_by=1, fun=mean) {
-  new_data <-  data[r_s, c_s]
-  data_list <- split(new_data, split_by)
-  calculated_values <- (lapply(data_list, class_check))
-  print(calculated_values)
+my_new_fun <- function(data, r_s, c_s) {
+  new_data <-  data[r_s, c_s, drop=F]
+  calculated_values <- lapply(new_data, class_check)
+ calculated_values <- append(calculated_values, list(new_data = new_data), 0)
+  return(calculated_values)
 }
 
+my_new_fun(iris, 1:10, 1:5)
 
-my_new_fun(iris, 1:20, 1:5, split_by = iris$Species, fun=class_check)
+my_new_fun(trees, 1:20, 1)
 
- #the results that I get with the new function are weird, I think I made some mistake, but I don't know where...
+my_new_fun(mtcars, 1:10, 1:5)
  
