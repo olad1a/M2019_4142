@@ -1,73 +1,70 @@
 ---
-title: "Task_4"
+title: "Task 4. Weather"
 output: html_document
 ---
-#Tidying Data
-###*by Lada Maksimova*
+
+##Tidying Data
+
+*by Lada Maksimova*
 
 ## Downloading packs and data
 
-```{r}
+```{r, message=FALSE}
 `weather` <- readRDS('C:/Users/Xiaomi/Desktop/R_class/weather.rds')
 library(tidyr)
 library(dplyr)
-View(weather)
+library(tidyverse)
 ```
 
 ## Rearranging the table
 
-```{r}
+```{r, message=FALSE}
+weather <- weather[,-1]
 weather1 <- weather %>%
-  gather(key = day, value = val, X1 : X31) %>%
+  pivot_longer(cols = starts_with("X"), names_to = "day", values_to = "value") %>%
+  pivot_wider(names_from = "measure", values_from = "value")
+```
+
+## Now let's get rid of NAs:
+
+```{r, echo=FALSE}
+weather2 <- na.omit(weather1)
+```
+
+#### Let's look what do we have by now
+
+```{r}
+head(weather2)
+tail(weather2)
+```
+
+##Let's organize our table and create new column called "Date"
+
+```{r, message=FALSE}
+weather3 <- weather2 %>%
   separate(day, c("x", "day"), sep = 1) %>%
-  pivot_wider(names_from  = measure, values_from = val) %>%
+  select(-x) %>% 
   arrange(year, month) %>%
-  unite(col = date, year, month, day)
+  unite(col = Date, year, month, day)
 ```
 
-## Now let's get rid of some useless columns:
+##Fixing data types
 
-```{r}
-weather1$X <- NULL
-weather1$x <- NULL
+Let's see what's going on with data types
+```{r, echo=FALSE}
+summary(weather3) 
 ```
-
-### Let's look what do we have by now
-
-```{r}
-head(weather1)
-tail(weather1)
-View(weather1)
+We see, that all the columns are charecters now. I think, that we should leave "date" as a charecter, change "events" to factor , and all the rest to numeric. 
+```{r, message=FALSE, echo=FALSE}
+weather_tidy <- weather3
+weather_tidy$Events = as.factor(weather_tidy$Events)
+library(magrittr)
+weather_tidy[, c(2:21, 23)]  %<>% lapply(function(x) as.numeric(as.character(x)))
 ```
-
-##Now we shold do something with those NA values
-
-```{r}
-tidy_weather <- na.omit(weather1)
+Let's check the summary one more time
+```{r, message=FALSE}
+summary(weather_tidy)
 ```
-But something went wrong, and all the observations wanished! I suppose it happened, because in every raw there were at least 1 NA value. Well, let's try another way...
-```{r}
-tidy_weather <- group_by(weather, date ) %>%
-+   summarise(Max.TemperatureF = max(Max.TemperatureF , na.rm = T),
-+             Min.TemperatureF = max( Min.TemperatureF , na.rm = T),
-+             MeanDew.PointF = max(MeanDew.PointF , na.rm = T),
-+             Min.DewpointF = max(Min.DewpointF , na.rm = T) , 
-+             Max.Humidity = max(Max.Humidity , na.rm = T),
-+             Mean.Humidity = max(Mean.Humidity , na.rm = T),
-+             Min.Humidity = max(Min.Humidity , na.rm = T),
-+             Max.Sea.Level.PressureIn = max(Max.Sea.Level.PressureIn , na.rm = T), 
-+             Min.Sea.Level.PressureIn = max(Min.Sea.Level.PressureIn , na.rm = T),
-+             Max.VisibilityMiles = max(Max.VisibilityMiles , na.rm = T),
-+             Mean.VisibilityMiles = max(Mean.VisibilityMiles , na.rm = T),
-+             Min.VisibilityMiles = max(Min.VisibilityMiles , na.rm = T),
-+             Max.Wind.SpeedMPH = max(Max.Wind.SpeedMPH , na.rm = T),
-+             Mean.Wind.SpeedMPH = max(Mean.Wind.SpeedMPH , na.rm = T),
-+             Max.Gust.SpeedMPH = max(Max.Gust.SpeedMPH , na.rm = T),
-+             PrecipitationIn = max(PrecipitationIn , na.rm = T),
-+             CloudCover = max(CloudCover , na.rm = T),
-+             Events = max(Events , na.rm = T),
-+             WindDirDegrees = max(WindDirDegrees , na.rm = T))
+That's better!
 
-tidy_weather <- na.omit(tidy_weather)
-```
-P.S. I left the order of the "dates" the way it is. But it's not 1 -> 30. 1 is followed by 10, 11 etc.
+##The end.
